@@ -1,0 +1,9 @@
+result
+result-*
+
+# Local upstream Warp clone, if present.
+warp/
+.claude/settings.local.json
+.mcp.json
+docs/
+HANDOFF.md
