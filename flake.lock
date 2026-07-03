@@ -625,18 +625,6 @@
         "url": "https://devimages-cdn.apple.com/design/resources/download/NY.dmg"
       }
     },
-    "oh-my-pi-bin": {
-      "flake": false,
-      "locked": {
-        "narHash": "sha256-wf+nXweQOdQ1szz//IHhF15x8FpzNWr7r10IdwJ6GW4=",
-        "type": "file",
-        "url": "https://github.com/can1357/oh-my-pi/releases/download/v16.1.16/omp-linux-x64"
-      },
-      "original": {
-        "type": "file",
-        "url": "https://github.com/can1357/oh-my-pi/releases/download/v16.1.16/omp-linux-x64"
-      }
-    },
     "proton-cachyos": {
       "inputs": {
         "nixpkgs": "nixpkgs_4"
@@ -674,7 +662,6 @@
         "noctalia-greeter": "noctalia-greeter",
         "noctalia-plugins": "noctalia-plugins",
         "noctalia-v4": "noctalia-v4",
-        "oh-my-pi-bin": "oh-my-pi-bin",
         "proton-cachyos": "proton-cachyos",
         "spicetify-nix": "spicetify-nix"
       }

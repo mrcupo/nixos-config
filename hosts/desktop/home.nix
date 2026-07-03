@@ -1,9 +1,8 @@
 { pkgs, ... }:
 
-# Desktop-specific Home Manager config. Merged with the shared modules/home.nix
-# by flake.nix (home-manager.users.user.imports).
+# Desktop-specific Home Manager config.
 {
-  # Desktop-only user packages. Shared packages live in modules/home.nix.
+  # Desktop-only user packages.
   home.packages = with pkgs; [
     app2unit
     reddit-tui
@@ -119,7 +118,6 @@
     nupdate = "nix flake update --flake /etc/nixos && nh os switch";
     nupdate-pkgs = "nix flake update nixpkgs --flake /etc/nixos && nh os switch";
     nupdate-shell = "nix flake update noctalia --flake /etc/nixos && nh os switch && ~/.local/bin/noctalia-restart";
-    nupdate-omp = "cd /etc/nixos && nix run .#bump-oh-my-pi && nh os switch && ~/.local/bin/noctalia-restart";
     nrestart = "~/.local/bin/noctalia-restart";
   };
 }

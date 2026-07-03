@@ -1,7 +1,6 @@
 { pkgs, ... }:
 
-# Laptop-specific Home Manager config. Merged with the shared modules/home.nix
-# by flake.nix (home-manager.users.user.imports).
+# Laptop-specific Home Manager config.
 {
   # The laptop's packages used to live in environment.systemPackages, whose
   # NixOS profile installs the `doc`/`info` outputs by default. Home Manager's
@@ -9,7 +8,7 @@
   # post-merge laptop closure identical to the pre-merge one.
   home.extraOutputsToInstall = [ "doc" "info" ];
 
-  # Laptop-only user packages. Shared packages live in modules/home.nix.
+  # Laptop-only user packages.
   home.packages = with pkgs; [
     nps
     unrar
@@ -89,7 +88,6 @@
   home.shellAliases = {
     nswitch = "cd /etc/nixos && nh os switch";
     nstage-switch = "cd /etc/nixos && git add . && nh os switch";
-    nupdate-omp = "cd /etc/nixos && nix run .#bump-oh-my-pi && nh os switch";
     nrestart = "pkill -x noctalia; while pgrep -x noctalia >/dev/null; do sleep 0.1; done; setsid noctalia >/dev/null 2>&1 < /dev/null &";
   };
 }

@@ -1,8 +1,6 @@
 { ... }:
 
 # Shared desktop NixOS modules — imported by the desktop profile only.
-# Note: home.nix is intentionally NOT listed here — it is a Home Manager
-# module, wired in separately via home-manager.users.user in flake.nix.
 {
   imports = [
     ./boot.nix

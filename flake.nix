@@ -39,13 +39,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Oh My Pi CLI binary. Keep this on a versioned release URL so `nswitch`
-    # never breaks because GitHub's mutable `latest` asset changed. Update with:
-    #   nupdate-omp
-    oh-my-pi-bin = {
-      url = "https://github.com/can1357/oh-my-pi/releases/download/v16.1.16/omp-linux-x64";
-      flake = false;
-    };
 
     # Noctalia v5 — laptop only. Pinned to the currently-installed rev so
     # normal flake updates do not force a Noctalia rebuild on every upstream v5
@@ -138,65 +131,8 @@
       warp-oss = pkgs.writeShellScriptBin "warp-oss" ''
         exec ${pkgs.kitty}/bin/kitty "$@"
       '';
-      eilmeldung-pkg = inputs.eilmeldung.packages.${system}.eilmeldung.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [ ./patches/eilmeldung-plain-article-links.patch ];
-      });
+      eilmeldung-pkg = inputs.eilmeldung.packages.${system}.eilmeldung;
       tuxedo-pkg = inputs.nixpkgs-tuxedo.legacyPackages.${system}.tuxedo;
-      bumpOhMyPi = pkgs.writeShellApplication {
-        name = "bump-oh-my-pi";
-        runtimeInputs = with pkgs; [
-          curl
-          jq
-          nix
-          python3
-        ];
-        text = ''
-                    set -euo pipefail
-
-                    repo=/etc/nixos
-                    asset=omp-linux-x64
-                    tag="$(curl -fsSL https://api.github.com/repos/can1357/oh-my-pi/releases/latest | jq -r '.tag_name // empty')"
-
-                    if [ -z "$tag" ]; then
-                      echo "could not resolve latest Oh My Pi release tag" >&2
-                      exit 1
-                    fi
-
-                    url="https://github.com/can1357/oh-my-pi/releases/download/$tag/$asset"
-                    python3 - "$repo/flake.nix" "$repo/modules/home.nix" "$tag" "$url" <<'PY'
-          import pathlib
-          import re
-          import sys
-
-          flake_path = pathlib.Path(sys.argv[1])
-          module_path = pathlib.Path(sys.argv[2])
-          tag = sys.argv[3]
-          url = sys.argv[4]
-          version = tag.removeprefix("v")
-
-          flake_text = flake_path.read_text()
-          flake_pattern = r'https://github\.com/can1357/oh-my-pi/releases/download/[^"]+/omp-linux-x64'
-          flake_new, flake_count = re.subn(flake_pattern, url, flake_text, count=1)
-          if flake_count != 1:
-              sys.exit("expected exactly one versioned oh-my-pi URL in flake.nix")
-
-          module_text = module_path.read_text()
-          module_pattern = r'(ohMyPi = pkgs\.stdenvNoCC\.mkDerivation \{\n\s+pname = "oh-my-pi";\n\s+version = ")[^"]+(";)'
-          module_new, module_count = re.subn(module_pattern, rf'\g<1>{version}\2', module_text, count=1)
-          if module_count != 1:
-              sys.exit("expected exactly one ohMyPi version in modules/home.nix")
-
-          if flake_new == flake_text and module_new == module_text:
-              print(f"oh-my-pi-bin already points at {url}")
-          else:
-              flake_path.write_text(flake_new)
-              module_path.write_text(module_new)
-              print(f"updated oh-my-pi-bin to {url}")
-          PY
-
-                    nix flake update oh-my-pi-bin --flake "$repo"
-        '';
-      };
 
       # Desktop/laptop profile wiring: the full shared GUI module set (./modules)
       # plus the overlays, Helium NixOS module, and Home Manager that desktops
@@ -223,12 +159,12 @@
             claude-code = claude-code-pkg;
             eilmeldung = eilmeldung-pkg;
             tuxedo = tuxedo-pkg;
-            oh-my-pi-bin = inputs.oh-my-pi-bin;
           };
           home-manager.users.user.imports = [
-            ./modules/home.nix
             (./hosts + "/${dir}/home.nix")
           ];
+          home-manager.users.user.home.stateVersion = "25.05";
+          home-manager.users.user.home.enableNixpkgsReleaseCheck = false;
         }
       ];
 
@@ -304,14 +240,8 @@
       # Public copy exposes the terminal shim used by the desktop modules.
       packages.${system} = {
         inherit warp-oss;
-        bump-oh-my-pi = bumpOhMyPi;
       };
 
-      apps.${system}.bump-oh-my-pi = {
-        type = "app";
-        program = "${bumpOhMyPi}/bin/bump-oh-my-pi";
-        meta.description = "Update the pinned Oh My Pi binary input";
-      };
 
 
       # `nix develop` — Nix tooling for editing this repo. Deliberately NOT wired
