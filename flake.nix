@@ -160,9 +160,6 @@
             eilmeldung = eilmeldung-pkg;
             tuxedo = tuxedo-pkg;
           };
-          home-manager.users.user.imports = [
-            (./hosts + "/${dir}/home.nix")
-          ];
           home-manager.users.user.home.stateVersion = "25.05";
           home-manager.users.user.home.enableNixpkgsReleaseCheck = false;
         }

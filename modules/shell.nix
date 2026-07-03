@@ -1,8 +1,7 @@
 { ... }:
 
 {
-  # System-level zsh enablement only. Interactive zsh settings, keybindings
-  # and aliases live in each host's Home Manager config.
+  # System-level zsh enablement.
   programs.zsh = {
     enable = true;
     enableCompletion = true;

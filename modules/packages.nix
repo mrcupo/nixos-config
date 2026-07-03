@@ -1,7 +1,6 @@
 { pkgs, inputs, ... }:
 
-# System-wide programs and the few true system/admin packages. User-facing
-# packages live in Home Manager (hosts/<host>/home.nix).
+# System-wide programs and admin packages.
 {
   # Firefox is kept as a fallback/compatibility browser; Helium is primary
   # (see modules/helium.nix).
