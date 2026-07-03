@@ -30,11 +30,6 @@
       inputs.home-manager.follows = "home-manager";
     };
 
-    # Nix formatter (nixfmt) for `nix fmt` and the dev shell. See treefmt.nix.
-    treefmt-nix = {
-      url = "github:numtide/treefmt-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     claude-code.url = "github:sadjow/claude-code-nix";
 
@@ -138,7 +133,6 @@
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
-      treefmtEval = inputs.treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
       claude-code-pkg = claude-code.packages.${system}.claude-code;
       # Public copy: replace the private Warp fork with a local-compatible terminal shim.
       warp-oss = pkgs.writeShellScriptBin "warp-oss" ''
@@ -319,8 +313,6 @@
         meta.description = "Update the pinned Oh My Pi binary input";
       };
 
-      # `nix fmt` formats the whole tree with nixfmt (config in ./treefmt.nix).
-      formatter.${system} = treefmtEval.config.build.wrapper;
 
       # `nix develop` — Nix tooling for editing this repo. Deliberately NOT wired
       # into `nix flake check`, so an unformatted tree never blocks a build.
